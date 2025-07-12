@@ -1,0 +1,43 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: AppService API
+    version: 0.0.1
+paths:
+    /api/v1/apps:
+        get:
+            tags:
+                - AppService
+            operationId: AppService_Get
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+components:
+    schemas:
+        kubecaptain.apis.api.v1.app.App:
+            required:
+                - name
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                description:
+                    type: string
+tags:
+    - name: AppService

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package kubecaptain.apis.api.v1.app;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "validate/validate.proto";
+
+option go_package = "kubecaptain/apis/api/v1/app;app";
+
+service AppService {
+  rpc Get(IdentityRequest) returns (App) {
+    option (google.api.http) = {
+      get: "/api/v1/apps"
+    };
+  }
+}
+
+message App {
+  uint32 id = 1 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+  string name = 2 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = {pattern: "^[a-zA-Z0-9][a-zA-Z0-9_-]*$", max_len: 64}
+  ];
+  string description = 3 [
+    (google.api.field_behavior) = OPTIONAL,
+    (validate.rules).string = {max_len: 512}
+  ];
+}
+
+message IdentityRequest {
+  uint32 id = 1;
+}
