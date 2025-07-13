@@ -1,8 +1,8 @@
 import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { useContext } from "react";
-import { ThemeContext } from "@/layout/component/theme/context.ts";
+import { ThemeContext } from "@/component/theme/context.ts";
 
-export default function DarkModeToggle() {
+export default function ThemeToggler() {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
     return isDarkMode ? (
         <SunOutlined onClick={toggleTheme} className={"text-xl"} />

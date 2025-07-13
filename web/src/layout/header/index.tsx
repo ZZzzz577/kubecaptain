@@ -2,7 +2,9 @@ import { Flex, theme } from "antd";
 import { Header } from "antd/es/layout/layout";
 import MenuFoldToggler from "@/layout/header/component/MenuFoldToggler.tsx";
 import Breadcrumb from "@/layout/header/component/Breadcrumb.tsx";
-import DarkModeToggle from "@/layout/header/component/ThemeToggler.tsx";
+import FullScreenToggler from "@/layout/header/component/FullScreenToggler.tsx";
+import ThemeToggler from "@/layout/header/component/ThemeToggler.tsx";
+import LocalesToggler from "@/layout/header/component/LocalesToggler.tsx";
 
 interface HeaderProps {
     collapsed: boolean;
@@ -21,7 +23,9 @@ export default function AppHeader({ collapsed, triggerCollapsed }: HeaderProps) 
                     <Breadcrumb />
                 </Flex>
                 <Flex align={"center"} gap={"middle"}>
-                   <DarkModeToggle />
+                    <FullScreenToggler />
+                    <ThemeToggler />
+                    <LocalesToggler />
                 </Flex>
             </Flex>
         </Header>

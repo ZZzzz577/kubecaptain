@@ -3,7 +3,7 @@ import { ConfigProvider, Layout } from "antd";
 import AppSider from "@/layout/sider";
 import AppHeader from "@/layout/header";
 import AppContent from "@/layout/content";
-import { ThemeContext } from "@/layout/component/theme/context.ts";
+import { ThemeContext } from "@/component/theme/context.ts";
 
 export default function AppLayout() {
     const [siderCollapsed, setSiderCollapsed] = useState(false);
