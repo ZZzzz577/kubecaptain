@@ -57,33 +57,26 @@ func (m *CreateRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetAppName()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateRequestValidationError{
-					field:  "AppName",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateRequestValidationError{
-					field:  "AppName",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if utf8.RuneCountInString(m.GetName()) > 64 {
+		err := CreateRequestValidationError{
+			field:  "Name",
+			reason: "value length must be at most 64 runes",
 		}
-	} else if v, ok := interface{}(m.GetAppName()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateRequestValidationError{
-				field:  "AppName",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
+	}
+
+	if !_CreateRequest_Name_Pattern.MatchString(m.GetName()) {
+		err := CreateRequestValidationError{
+			field:  "Name",
+			reason: "value does not match regex pattern \"^[a-z]([a-z0-9-]*[a-z0-9])?$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -163,3 +156,5 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CreateRequestValidationError{}
+
+var _CreateRequest_Name_Pattern = regexp.MustCompile("^[a-z]([a-z0-9-]*[a-z0-9])?$")

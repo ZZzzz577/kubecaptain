@@ -53,27 +53,6 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /v1/app/{app_name.name}/ci/task:
-        post:
-            tags:
-                - AppCITaskService
-            operationId: AppCITaskService_Create
-            parameters:
-                - name: app_name.name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.CreateRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /v1/app/{name}:
         get:
             tags:
@@ -144,6 +123,27 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /v1/app/{name}/ci/task:
+        post:
+            tags:
+                - AppCITaskService
+            operationId: AppCITaskService_Create
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.CreateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
 components:
     schemas:
         kubecaptain.apis.api.v1.app.App:
@@ -180,11 +180,11 @@ components:
                     format: date-time
         kubecaptain.apis.api.v1.app.CreateRequest:
             required:
-                - appName
+                - name
             type: object
             properties:
-                appName:
-                    $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.NameRequest'
+                name:
+                    type: string
         kubecaptain.apis.api.v1.app.ListResponse:
             type: object
             properties:
@@ -192,13 +192,6 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
-        kubecaptain.apis.api.v1.app.NameRequest:
-            required:
-                - name
-            type: object
-            properties:
-                name:
-                    type: string
 tags:
     - name: AppCIService
     - name: AppCITaskService

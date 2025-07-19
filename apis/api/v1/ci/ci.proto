@@ -7,7 +7,6 @@ import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
-import "v1/app/app.proto";
 
 option go_package = "kubecaptain/apis/api/v1/app/ci;ci";
 

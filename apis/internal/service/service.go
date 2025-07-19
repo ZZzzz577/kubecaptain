@@ -7,10 +7,12 @@ type Service interface{}
 func NewServices(
 	app *AppService,
 	appCI *AppCIService,
+	appCITask *AppCITaskService,
 ) []Service {
 	return []Service{
 		app,
 		appCI,
+		appCITask,
 	}
 }
 
@@ -19,4 +21,5 @@ var ProviderSet = wire.NewSet(
 	NewServices,
 	NewAppService,
 	NewAppCIService,
+	NewAppCITaskService,
 )

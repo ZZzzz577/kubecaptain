@@ -28,7 +28,7 @@ type AppCITaskServiceHTTPServer interface {
 
 func RegisterAppCITaskServiceHTTPServer(s *http.Server, srv AppCITaskServiceHTTPServer) {
 	r := s.Route("/")
-	r.POST("/v1/app/{app_name.name}/ci/task", _AppCITaskService_Create1_HTTP_Handler(srv))
+	r.POST("/v1/app/{name}/ci/task", _AppCITaskService_Create1_HTTP_Handler(srv))
 }
 
 func _AppCITaskService_Create1_HTTP_Handler(srv AppCITaskServiceHTTPServer) func(ctx http.Context) error {
@@ -70,7 +70,7 @@ func NewAppCITaskServiceHTTPClient(client *http.Client) AppCITaskServiceHTTPClie
 
 func (c *AppCITaskServiceHTTPClientImpl) Create(ctx context.Context, in *CreateRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
 	var out emptypb.Empty
-	pattern := "/v1/app/{app_name.name}/ci/task"
+	pattern := "/v1/app/{name}/ci/task"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAppCITaskServiceCreate))
 	opts = append(opts, http.PathTemplate(pattern))
