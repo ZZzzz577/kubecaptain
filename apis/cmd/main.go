@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"kubecaptain/apis/internal/conf"
+	"kubecaptain/apis/internal/server"
 	"os"
 
 	kzlog "github.com/go-kratos/kratos/contrib/log/zerolog/v2"
@@ -33,7 +34,7 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs/config.yaml", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
+func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, ks *server.KubeManagerServer) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),
@@ -43,6 +44,7 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 		kratos.Server(
 			gs,
 			hs,
+			ks,
 		),
 	)
 }
@@ -80,7 +82,7 @@ func main() {
 		panic(err)
 	}
 
-	app, cleanup, err := wireApp(bc.Server, logger)
+	app, cleanup, err := wireApp(&bc, logger)
 	if err != nil {
 		panic(err)
 	}

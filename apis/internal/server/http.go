@@ -9,13 +9,14 @@ import (
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(c *conf.Server, services []service.Service) *http.Server {
+func NewHTTPServer(config *conf.Bootstrap, services []service.Service) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
 			validate.Validator(),
 		),
 	}
+	c := config.Server
 	if c.Http.Network != "" {
 		opts = append(opts, http.Network(c.Http.Network))
 	}

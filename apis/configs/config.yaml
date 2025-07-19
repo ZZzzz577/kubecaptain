@@ -1,7 +1,9 @@
 server:
   http:
     addr: 0.0.0.0:8000
-    timeout: 1s
+    timeout: 100s
   grpc:
     addr: 0.0.0.0:9000
-    timeout: 1s
+    timeout: 100s
+application:
+  namespace: kubecaptain

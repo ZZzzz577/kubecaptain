@@ -10,6 +10,7 @@ import (
 	context "context"
 	http "github.com/go-kratos/kratos/v2/transport/http"
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,26 +20,60 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationAppServiceCreate = "/kubecaptain.apis.api.v1.app.AppService/Create"
+const OperationAppServiceDelete = "/kubecaptain.apis.api.v1.app.AppService/Delete"
 const OperationAppServiceGet = "/kubecaptain.apis.api.v1.app.AppService/Get"
+const OperationAppServiceList = "/kubecaptain.apis.api.v1.app.AppService/List"
+const OperationAppServiceUpdate = "/kubecaptain.apis.api.v1.app.AppService/Update"
 
 type AppServiceHTTPServer interface {
-	Get(context.Context, *IdentityRequest) (*App, error)
+	Create(context.Context, *App) (*emptypb.Empty, error)
+	Delete(context.Context, *NameRequest) (*emptypb.Empty, error)
+	Get(context.Context, *NameRequest) (*App, error)
+	List(context.Context, *ListRequest) (*ListResponse, error)
+	Update(context.Context, *UpdateRequest) (*emptypb.Empty, error)
 }
 
 func RegisterAppServiceHTTPServer(s *http.Server, srv AppServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/api/v1/apps", _AppService_Get0_HTTP_Handler(srv))
+	r.GET("/v1/app", _AppService_List0_HTTP_Handler(srv))
+	r.GET("/v1/app/{name}", _AppService_Get0_HTTP_Handler(srv))
+	r.POST("/v1/app", _AppService_Create0_HTTP_Handler(srv))
+	r.PUT("/v1/app/{app.name}", _AppService_Update0_HTTP_Handler(srv))
+	r.DELETE("/v1/app/{name}", _AppService_Delete0_HTTP_Handler(srv))
+}
+
+func _AppService_List0_HTTP_Handler(srv AppServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAppServiceList)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.List(ctx, req.(*ListRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListResponse)
+		return ctx.Result(200, reply)
+	}
 }
 
 func _AppService_Get0_HTTP_Handler(srv AppServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
-		var in IdentityRequest
+		var in NameRequest
 		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationAppServiceGet)
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Get(ctx, req.(*IdentityRequest))
+			return srv.Get(ctx, req.(*NameRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -49,8 +84,81 @@ func _AppService_Get0_HTTP_Handler(srv AppServiceHTTPServer) func(ctx http.Conte
 	}
 }
 
+func _AppService_Create0_HTTP_Handler(srv AppServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in App
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAppServiceCreate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Create(ctx, req.(*App))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AppService_Update0_HTTP_Handler(srv AppServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateRequest
+		if err := ctx.Bind(&in.App); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAppServiceUpdate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Update(ctx, req.(*UpdateRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AppService_Delete0_HTTP_Handler(srv AppServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in NameRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAppServiceDelete)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Delete(ctx, req.(*NameRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AppServiceHTTPClient interface {
-	Get(ctx context.Context, req *IdentityRequest, opts ...http.CallOption) (rsp *App, err error)
+	Create(ctx context.Context, req *App, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Delete(ctx context.Context, req *NameRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	Get(ctx context.Context, req *NameRequest, opts ...http.CallOption) (rsp *App, err error)
+	List(ctx context.Context, req *ListRequest, opts ...http.CallOption) (rsp *ListResponse, err error)
+	Update(ctx context.Context, req *UpdateRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type AppServiceHTTPClientImpl struct {
@@ -61,13 +169,65 @@ func NewAppServiceHTTPClient(client *http.Client) AppServiceHTTPClient {
 	return &AppServiceHTTPClientImpl{client}
 }
 
-func (c *AppServiceHTTPClientImpl) Get(ctx context.Context, in *IdentityRequest, opts ...http.CallOption) (*App, error) {
+func (c *AppServiceHTTPClientImpl) Create(ctx context.Context, in *App, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/v1/app"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAppServiceCreate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AppServiceHTTPClientImpl) Delete(ctx context.Context, in *NameRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/v1/app/{name}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAppServiceDelete))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AppServiceHTTPClientImpl) Get(ctx context.Context, in *NameRequest, opts ...http.CallOption) (*App, error) {
 	var out App
-	pattern := "/api/v1/apps"
+	pattern := "/v1/app/{name}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationAppServiceGet))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AppServiceHTTPClientImpl) List(ctx context.Context, in *ListRequest, opts ...http.CallOption) (*ListResponse, error) {
+	var out ListResponse
+	pattern := "/v1/app"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationAppServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *AppServiceHTTPClientImpl) Update(ctx context.Context, in *UpdateRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/v1/app/{app.name}"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAppServiceUpdate))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "PUT", path, in.App, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package kubecaptain.apis.api.v1.app;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+import "v1/app/app.proto";
+
+option go_package = "kubecaptain/apis/api/v1/app/ci/task;task";
+
+service AppCITaskService {
+  rpc Create (CreateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/app/{app_name.name}/ci/task"
+      body: "*"
+    };
+  }
+}
+
+message CreateRequest {
+  app.NameRequest app_name = 1 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

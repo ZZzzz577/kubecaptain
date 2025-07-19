@@ -3,20 +3,88 @@
 
 openapi: 3.0.3
 info:
-    title: AppService API
+    title: ""
     version: 0.0.1
 paths:
-    /api/v1/apps:
+    /v1/app:
+        get:
+            tags:
+                - AppService
+            operationId: AppService_List
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.ListResponse'
+        post:
+            tags:
+                - AppService
+            operationId: AppService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/app/{app.name}:
+        put:
+            tags:
+                - AppService
+            operationId: AppService_Update
+            parameters:
+                - name: app.name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/app/{app_name.name}/ci/task:
+        post:
+            tags:
+                - AppCITaskService
+            operationId: AppCITaskService_Create
+            parameters:
+                - name: app_name.name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.CreateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/app/{name}:
         get:
             tags:
                 - AppService
             operationId: AppService_Get
             parameters:
-                - name: id
-                  in: query
+                - name: name
+                  in: path
+                  required: true
                   schema:
-                    type: integer
-                    format: uint32
+                    type: string
             responses:
                 "200":
                     description: OK
@@ -24,20 +92,114 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+        delete:
+            tags:
+                - AppService
+            operationId: AppService_Delete
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/app/{name}/ci:
+        get:
+            tags:
+                - AppCIService
+            operationId: AppCIService_Get
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.AppCIConfig'
+        put:
+            tags:
+                - AppCIService
+            operationId: AppCIService_Apply
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.AppCIConfig'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
 components:
     schemas:
         kubecaptain.apis.api.v1.app.App:
             required:
                 - name
+                - users
             type: object
             properties:
-                id:
-                    readOnly: true
-                    type: integer
-                    format: uint32
                 name:
                     type: string
                 description:
                     type: string
+                users:
+                    type: array
+                    items:
+                        type: string
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+        kubecaptain.apis.api.v1.app.AppCIConfig:
+            required:
+                - gitUrl
+                - dockerfile
+            type: object
+            properties:
+                gitUrl:
+                    type: string
+                dockerfile:
+                    type: string
+                createdAt:
+                    readOnly: true
+                    type: string
+                    format: date-time
+        kubecaptain.apis.api.v1.app.CreateRequest:
+            required:
+                - appName
+            type: object
+            properties:
+                appName:
+                    $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.NameRequest'
+        kubecaptain.apis.api.v1.app.ListResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+        kubecaptain.apis.api.v1.app.NameRequest:
+            required:
+                - name
+            type: object
+            properties:
+                name:
+                    type: string
 tags:
+    - name: AppCIService
+    - name: AppCITaskService
     - name: AppService

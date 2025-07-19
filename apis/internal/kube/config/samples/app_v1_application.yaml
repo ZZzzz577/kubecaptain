@@ -1,0 +1,9 @@
+apiVersion: app.kubecaptain.apis/v1
+kind: Application
+metadata:
+  labels:
+    app.kubernetes.io/name: kube
+    app.kubernetes.io/managed-by: kustomize
+  name: application-sample
+spec:
+  # TODO(user): Add fields here

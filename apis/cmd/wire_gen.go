@@ -11,6 +11,8 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"kubecaptain/apis/internal/biz"
 	"kubecaptain/apis/internal/conf"
+	"kubecaptain/apis/internal/kube"
+	"kubecaptain/apis/internal/kube/controller"
 	"kubecaptain/apis/internal/server"
 	"kubecaptain/apis/internal/service"
 )
@@ -22,13 +24,35 @@ import (
 // Injectors from wire.go:
 
 // wireApp init kratos application.
-func wireApp(confServer *conf.Server, logger log.Logger) (*kratos.App, func(), error) {
-	appBiz := biz.NewAppBiz()
-	appService := service.NewAppService(appBiz)
-	v := service.NewServices(appService)
-	grpcServer := server.NewGRPCServer(confServer, v)
-	httpServer := server.NewHTTPServer(confServer, v)
-	app := newApp(logger, grpcServer, httpServer)
+func wireApp(bootstrap *conf.Bootstrap, logger log.Logger) (*kratos.App, func(), error) {
+	manager, err := kube.NewKubeManager()
+	if err != nil {
+		return nil, nil, err
+	}
+	client, err := kube.NewKubeClient(manager)
+	if err != nil {
+		return nil, nil, err
+	}
+	appUseCase, err := biz.NewAppUseCase(bootstrap, client)
+	if err != nil {
+		return nil, nil, err
+	}
+	appService := service.NewAppService(appUseCase)
+	appCIUseCase, err := biz.NewAppCIUseCase(appUseCase, client)
+	if err != nil {
+		return nil, nil, err
+	}
+	appCIService := service.NewAppCIService(appCIUseCase)
+	v := service.NewServices(appService, appCIService)
+	grpcServer := server.NewGRPCServer(bootstrap, v)
+	httpServer := server.NewHTTPServer(bootstrap, v)
+	applicationReconciler := controller.NewApplicationReconciler(manager)
+	v2 := kube.NewManagedReconciler(applicationReconciler)
+	kubeManagerServer, err := server.NewKubeManagerServer(bootstrap, manager, v2)
+	if err != nil {
+		return nil, nil, err
+	}
+	app := newApp(logger, grpcServer, httpServer, kubeManagerServer)
 	return app, func() {
 	}, nil
 }

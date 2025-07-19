@@ -11,11 +11,18 @@ import (
 	"github.com/google/wire"
 	"kubecaptain/apis/internal/biz"
 	"kubecaptain/apis/internal/conf"
+	"kubecaptain/apis/internal/kube"
 	"kubecaptain/apis/internal/server"
 	"kubecaptain/apis/internal/service"
 )
 
 // wireApp init kratos application.
-func wireApp(*conf.Server, log.Logger) (*kratos.App, func(), error) {
-	panic(wire.Build(server.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
+func wireApp(*conf.Bootstrap, log.Logger) (*kratos.App, func(), error) {
+	panic(wire.Build(
+		server.ProviderSet,
+		biz.ProviderSet,
+		service.ProviderSet,
+		kube.ProviderSet,
+		newApp,
+	))
 }

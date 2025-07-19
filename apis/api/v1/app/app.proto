@@ -4,32 +4,78 @@ package kubecaptain.apis.api.v1.app;
 
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "kubecaptain/apis/api/v1/app;app";
 
 service AppService {
-  rpc Get(IdentityRequest) returns (App) {
+  rpc List (ListRequest) returns (ListResponse) {
     option (google.api.http) = {
-      get: "/api/v1/apps"
+      get: "/v1/app"
+    };
+  }
+  rpc Get (NameRequest) returns (App) {
+    option (google.api.http) = {
+      get: "/v1/app/{name}"
+    };
+  }
+  rpc Create (App) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/app"
+      body: "*"
+    };
+  }
+  rpc Update (UpdateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/v1/app/{app.name}"
+      body: "app"
+    };
+  }
+  rpc Delete (NameRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/app/{name}"
     };
   }
 }
 
 message App {
-  uint32 id = 1 [
-    (google.api.field_behavior) = OUTPUT_ONLY
-  ];
-  string name = 2 [
+  string name = 1 [
     (google.api.field_behavior) = REQUIRED,
-    (validate.rules).string = {pattern: "^[a-zA-Z0-9][a-zA-Z0-9_-]*$", max_len: 64}
+    (validate.rules).string = {pattern: "^[a-z]([a-z0-9-]*[a-z0-9])?$", max_len:64}
   ];
-  string description = 3 [
+  string description = 2 [
     (google.api.field_behavior) = OPTIONAL,
     (validate.rules).string = {max_len: 512}
   ];
+  repeated string users = 3 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).repeated = {min_items: 1, unique: true, ignore_empty: true}
+  ];
+
+
+  google.protobuf.Timestamp created_at = 100 [
+    (google.api.field_behavior) = OUTPUT_ONLY
+  ];
 }
 
-message IdentityRequest {
-  uint32 id = 1;
+message ListRequest {}
+
+message ListResponse {
+  repeated App items = 1;
+}
+
+message NameRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = {pattern: "^[a-z]([a-z0-9-]*[a-z0-9])?$", max_len:64}
+  ];
+}
+
+message UpdateRequest {
+  App app = 1[
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).message.required = true
+  ];
 }
