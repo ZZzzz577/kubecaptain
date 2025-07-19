@@ -53,10 +53,24 @@ message App {
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).repeated = {min_items: 1, unique: true, ignore_empty: true}
   ];
+  AppCIConfig ci_config = 4 [
+    (google.api.field_behavior) = REQUIRED
+  ];
 
 
   google.protobuf.Timestamp created_at = 100 [
     (google.api.field_behavior) = OUTPUT_ONLY
+  ];
+}
+
+message AppCIConfig {
+  string git_url = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = {uri: true, max_len: 512}
+  ];
+
+  string dockerfile = 2 [
+    (google.api.field_behavior) = REQUIRED
   ];
 }
 

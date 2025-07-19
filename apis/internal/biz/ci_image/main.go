@@ -15,18 +15,18 @@ func main() {
 	codePath := "/tmp/foo"
 	imageTag := "build:v1"
 	cloneCode(codePath)
-	buildImage(codePath, imageTag)
+	buildImage(imageTag)
 	pushImage(imageTag)
 }
 func cloneCode(codePath string) {
 	fmt.Println("###### Step1: Clone code")
-	gitUrl, err := os.ReadFile("/app/config/GitUrl")
-	if err != nil {
-		panic(err)
+	gitUrl := os.Getenv("GIT_URL")
+	if gitUrl == "" {
+		panic("GIT_URL is empty")
 	}
 	fmt.Printf("clone code from %s\n", string(gitUrl))
-	_, err = git.PlainClone(codePath, &git.CloneOptions{
-		URL:      string(gitUrl),
+	_, err := git.PlainClone(codePath, &git.CloneOptions{
+		URL:      gitUrl,
 		Progress: os.Stdout,
 	})
 	if err != nil {
@@ -34,7 +34,7 @@ func cloneCode(codePath string) {
 	}
 }
 
-func buildImage(codePath, imageTag string) {
+func buildImage(imageTag string) {
 	fmt.Println("###### Step2: Build image")
 	cmd := exec.Command("buildah", "build",
 		"--tag", imageTag,

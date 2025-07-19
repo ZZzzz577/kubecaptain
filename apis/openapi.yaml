@@ -85,44 +85,6 @@ paths:
                 "200":
                     description: OK
                     content: {}
-    /v1/app/{name}/ci:
-        get:
-            tags:
-                - AppCIService
-            operationId: AppCIService_Get
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.AppCIConfig'
-        put:
-            tags:
-                - AppCIService
-            operationId: AppCIService_Apply
-            parameters:
-                - name: name
-                  in: path
-                  required: true
-                  schema:
-                    type: string
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.AppCIConfig'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /v1/app/{name}/ci/task:
         post:
             tags:
@@ -150,6 +112,7 @@ components:
             required:
                 - name
                 - users
+                - ciConfig
             type: object
             properties:
                 name:
@@ -160,6 +123,8 @@ components:
                     type: array
                     items:
                         type: string
+                ciConfig:
+                    $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.AppCIConfig'
                 createdAt:
                     readOnly: true
                     type: string
@@ -174,10 +139,6 @@ components:
                     type: string
                 dockerfile:
                     type: string
-                createdAt:
-                    readOnly: true
-                    type: string
-                    format: date-time
         kubecaptain.apis.api.v1.app.CreateRequest:
             required:
                 - name
@@ -193,6 +154,5 @@ components:
                     items:
                         $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
 tags:
-    - name: AppCIService
     - name: AppCITaskService
     - name: AppService

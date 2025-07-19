@@ -15,19 +15,16 @@ import (
 
 type AppCITaskUseCase struct {
 	app        *AppUseCase
-	appCI      *AppCIUseCase
 	kubeClient client.Client
 }
 
 func NewAppCITaskUseCase(
 	app *AppUseCase,
-	appCI *AppCIUseCase,
 	kubeClient client.Client,
 ) (*AppCITaskUseCase, error) {
 	return &AppCITaskUseCase{
 		app:        app,
 		kubeClient: kubeClient,
-		appCI:      appCI,
 	}, nil
 }
 
@@ -37,7 +34,7 @@ func (a *AppCITaskUseCase) Create(ctx context.Context, request *task.CreateReque
 		log.Error().Err(err).Msg("create application CI task error")
 		return err
 	}
-	config, err := a.appCI.getDockerfileConfigMap(ctx, app.Name)
+	configMap, err := a.app.getDockerfileConfigMap(ctx, app.Name)
 	if err != nil {
 		log.Error().Err(err).Msg("create application ci task error")
 		return err
@@ -62,6 +59,12 @@ func (a *AppCITaskUseCase) Create(ctx context.Context, request *task.CreateReque
 							Name:            "ci-task",
 							Image:           "docker.io/library/build:1.0",
 							ImagePullPolicy: corev1.PullNever,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "GIT_URL",
+									Value: app.Spec.CI.GitUrl,
+								},
+							},
 							VolumeMounts: []corev1.VolumeMount{
 								{
 									Name:      "ci-config",
@@ -77,7 +80,7 @@ func (a *AppCITaskUseCase) Create(ctx context.Context, request *task.CreateReque
 							VolumeSource: corev1.VolumeSource{
 								ConfigMap: &corev1.ConfigMapVolumeSource{
 									LocalObjectReference: corev1.LocalObjectReference{
-										Name: config.Name,
+										Name: configMap.Name,
 									},
 								},
 							},

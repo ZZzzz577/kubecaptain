@@ -35,6 +35,14 @@ type ApplicationSpec struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:MinItems:=1
 	Users []string `json:"users"`
+	// +kubebuilder:validation:Required
+	CI *ApplicationCIConfig `json:"ci"`
+}
+
+type ApplicationCIConfig struct {
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:MaxLength:=512
+	GitUrl string `json:"gitUrl"`
 }
 
 // ApplicationStatus defines the observed state of Application.

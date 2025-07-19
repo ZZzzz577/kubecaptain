@@ -38,17 +38,12 @@ func wireApp(bootstrap *conf.Bootstrap, logger log.Logger) (*kratos.App, func(),
 		return nil, nil, err
 	}
 	appService := service.NewAppService(appUseCase)
-	appCIUseCase, err := biz.NewAppCIUseCase(appUseCase, client)
-	if err != nil {
-		return nil, nil, err
-	}
-	appCIService := service.NewAppCIService(appCIUseCase)
-	appCITaskUseCase, err := biz.NewAppCITaskUseCase(appUseCase, appCIUseCase, client)
+	appCITaskUseCase, err := biz.NewAppCITaskUseCase(appUseCase, client)
 	if err != nil {
 		return nil, nil, err
 	}
 	appCITaskService := service.NewAppCITaskService(appCITaskUseCase)
-	v := service.NewServices(appService, appCIService, appCITaskService)
+	v := service.NewServices(appService, appCITaskService)
 	grpcServer := server.NewGRPCServer(bootstrap, v)
 	httpServer := server.NewHTTPServer(bootstrap, v)
 	applicationReconciler := controller.NewApplicationReconciler(manager)
