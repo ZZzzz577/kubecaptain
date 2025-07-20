@@ -25,30 +25,26 @@ import (
 
 // wireApp init kratos application.
 func wireApp(bootstrap *conf.Bootstrap, logger log.Logger) (*kratos.App, func(), error) {
-	manager, err := kube.NewKubeManager()
+	v, err := kube.NewKubeManager()
 	if err != nil {
 		return nil, nil, err
 	}
-	client, err := kube.NewKubeClient(manager)
-	if err != nil {
-		return nil, nil, err
-	}
-	appUseCase, err := biz.NewAppUseCase(bootstrap, client)
+	appUseCase, err := biz.NewAppUseCase(bootstrap, v)
 	if err != nil {
 		return nil, nil, err
 	}
 	appService := service.NewAppService(appUseCase)
-	appCITaskUseCase, err := biz.NewAppCITaskUseCase(appUseCase, client)
+	appCITaskUseCase, err := biz.NewAppCITaskUseCase(appUseCase, v)
 	if err != nil {
 		return nil, nil, err
 	}
 	appCITaskService := service.NewAppCITaskService(appCITaskUseCase)
-	v := service.NewServices(appService, appCITaskService)
-	grpcServer := server.NewGRPCServer(bootstrap, v)
-	httpServer := server.NewHTTPServer(bootstrap, v)
-	applicationReconciler := controller.NewApplicationReconciler(manager)
-	v2 := kube.NewManagedReconciler(applicationReconciler)
-	kubeManagerServer, err := server.NewKubeManagerServer(bootstrap, manager, v2)
+	v2 := service.NewServices(appService, appCITaskService)
+	grpcServer := server.NewGRPCServer(bootstrap, v2)
+	httpServer := server.NewHTTPServer(bootstrap, v2)
+	applicationReconciler := controller.NewApplicationReconciler(v)
+	v3 := kube.NewManagedReconciler(applicationReconciler)
+	kubeManagerServer, err := server.NewKubeManagerServer(bootstrap, v, v3)
 	if err != nil {
 		return nil, nil, err
 	}

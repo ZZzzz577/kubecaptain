@@ -9,22 +9,26 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	task "kubecaptain/apis/api/v1/ci_task"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"time"
 )
 
 type AppCITaskUseCase struct {
 	app        *AppUseCase
+	mgr        ctrl.Manager
 	kubeClient client.Client
 }
 
 func NewAppCITaskUseCase(
 	app *AppUseCase,
-	kubeClient client.Client,
+	mgr ctrl.Manager,
 ) (*AppCITaskUseCase, error) {
 	return &AppCITaskUseCase{
 		app:        app,
-		kubeClient: kubeClient,
+		mgr:        mgr,
+		kubeClient: mgr.GetClient(),
 	}, nil
 }
 
@@ -95,5 +99,12 @@ func (a *AppCITaskUseCase) Create(ctx context.Context, request *task.CreateReque
 		log.Error().Err(err).Msg("create application CI task error")
 		return err
 	}
+
+	err = controllerutil.SetControllerReference(app, ciTask, a.mgr.GetScheme())
+	if err != nil {
+		log.Error().Err(err).Msg("create application CI task error")
+		return err
+	}
+
 	return nil
 }

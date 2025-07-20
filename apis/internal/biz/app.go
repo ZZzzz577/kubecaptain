@@ -14,8 +14,9 @@ import (
 	"kubecaptain/apis/api/v1/app"
 	"kubecaptain/apis/internal/conf"
 	appv1 "kubecaptain/apis/internal/kube/api/v1"
-
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"slices"
 )
 
@@ -23,17 +24,19 @@ const DockerfileConfigmapKey = "Dockerfile"
 
 type AppUseCase struct {
 	namespace  string
+	mgr        ctrl.Manager
 	kubeClient client.Client
 }
 
-func NewAppUseCase(config *conf.Bootstrap, kubeClient client.Client) (*AppUseCase, error) {
+func NewAppUseCase(config *conf.Bootstrap, mgr ctrl.Manager) (*AppUseCase, error) {
 	namespace := config.GetApplication().GetNamespace()
 	if namespace == "" {
 		return nil, fmt.Errorf("application namespace is empty")
 	}
 	return &AppUseCase{
 		namespace:  namespace,
-		kubeClient: kubeClient,
+		mgr:        mgr,
+		kubeClient: mgr.GetClient(),
 	}, nil
 }
 
@@ -126,6 +129,12 @@ func (a *AppUseCase) Create(ctx context.Context, request *app.App) error {
 			return err
 		}
 	}
+
+	err := controllerutil.SetControllerReference(application, configMap, a.mgr.GetScheme())
+	if err != nil {
+		log.Error().Err(err).Msg("create application error")
+		return err
+	}
 	return nil
 }
 
@@ -168,6 +177,7 @@ func (a *AppUseCase) Update(ctx context.Context, request *app.UpdateRequest) err
 		log.Error().Err(err).Msg("update application error")
 		return err
 	}
+
 	return nil
 }
 
