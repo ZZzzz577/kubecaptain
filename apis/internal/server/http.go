@@ -4,17 +4,22 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/gorilla/handlers"
 	"kubecaptain/apis/internal/conf"
-	"kubecaptain/apis/internal/service"
 )
 
 // NewHTTPServer new an HTTP server.
-func NewHTTPServer(config *conf.Bootstrap, services []service.Service) *http.Server {
+func NewHTTPServer(config *conf.Bootstrap) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
 			validate.Validator(),
 		),
+		http.Filter(handlers.CORS(
+			handlers.AllowedOrigins([]string{"*"}),
+			handlers.AllowedHeaders([]string{"Authorization", "Content-Type", "Accept"}),
+			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		)),
 	}
 	c := config.Server
 	if c.Http.Network != "" {
@@ -26,11 +31,5 @@ func NewHTTPServer(config *conf.Bootstrap, services []service.Service) *http.Ser
 	if c.Http.Timeout != nil {
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
-	srv := http.NewServer(opts...)
-	for _, s := range services {
-		if v, ok := s.(HTTPService); ok {
-			v.RegisterServiceHTTPServer(srv)
-		}
-	}
-	return srv
+	return http.NewServer(opts...)
 }

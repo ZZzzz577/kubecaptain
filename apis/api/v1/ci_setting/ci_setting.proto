@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package kubecaptain.api.v1.app;
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "validate/validate.proto";
+
+option go_package = "kubecaptain/api/v1/app/ci/setting;setting";
+
+service AppCISettingService {
+  rpc Get (GetRequest) returns (AppCISetting) {
+    option (google.api.http) = {
+      get: "/v1/app/{name}/ci"
+    };
+  }
+
+  rpc Apply (ApplyRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/app/{name}/ci"
+      body: "setting"
+    };
+  }
+}
+
+message AppCISetting {
+  string git_url = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = {uri: true, max_len: 512}
+  ];
+
+  string dockerfile = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}
+
+message GetRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = {pattern: "^[a-z]([a-z0-9-]*[a-z0-9])?$", max_len:64}
+  ];
+}
+
+message ApplyRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (validate.rules).string = {pattern: "^[a-z]([a-z0-9-]*[a-z0-9])?$", max_len:64}
+  ];
+  AppCISetting setting = 2 [
+    (google.api.field_behavior) = REQUIRED
+  ];
+}

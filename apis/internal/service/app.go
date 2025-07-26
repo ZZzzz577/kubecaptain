@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"kubecaptain/apis/api/v1/app"
 	"kubecaptain/apis/internal/biz"
@@ -14,18 +14,17 @@ type AppService struct {
 	uc *biz.AppUseCase
 }
 
-func NewAppService(uc *biz.AppUseCase) *AppService {
+func NewAppService(
+	uc *biz.AppUseCase,
+) *AppService {
 	return &AppService{
 		uc: uc,
 	}
 }
 
-func (a *AppService) RegisterServiceGRPCServer(s grpc.ServiceRegistrar) {
-	app.RegisterAppServiceServer(s, a)
-}
-
-func (a *AppService) RegisterServiceHTTPServer(s *http.Server) {
-	app.RegisterAppServiceHTTPServer(s, a)
+func (a *AppService) Register(gs *grpc.Server, hs *http.Server) {
+	app.RegisterAppServiceServer(gs, a)
+	app.RegisterAppServiceHTTPServer(hs, a)
 }
 
 func (a *AppService) List(ctx context.Context, request *app.ListRequest) (*app.ListResponse, error) {

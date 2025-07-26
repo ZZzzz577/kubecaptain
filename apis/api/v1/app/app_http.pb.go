@@ -20,11 +20,11 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationAppServiceCreate = "/kubecaptain.apis.api.v1.app.AppService/Create"
-const OperationAppServiceDelete = "/kubecaptain.apis.api.v1.app.AppService/Delete"
-const OperationAppServiceGet = "/kubecaptain.apis.api.v1.app.AppService/Get"
-const OperationAppServiceList = "/kubecaptain.apis.api.v1.app.AppService/List"
-const OperationAppServiceUpdate = "/kubecaptain.apis.api.v1.app.AppService/Update"
+const OperationAppServiceCreate = "/kubecaptain.api.v1.app.AppService/Create"
+const OperationAppServiceDelete = "/kubecaptain.api.v1.app.AppService/Delete"
+const OperationAppServiceGet = "/kubecaptain.api.v1.app.AppService/Get"
+const OperationAppServiceList = "/kubecaptain.api.v1.app.AppService/List"
+const OperationAppServiceUpdate = "/kubecaptain.api.v1.app.AppService/Update"
 
 type AppServiceHTTPServer interface {
 	Create(context.Context, *App) (*emptypb.Empty, error)

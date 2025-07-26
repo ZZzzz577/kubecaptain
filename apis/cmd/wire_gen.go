@@ -34,21 +34,30 @@ func wireApp(bootstrap *conf.Bootstrap, logger log.Logger) (*kratos.App, func(),
 		return nil, nil, err
 	}
 	appService := service.NewAppService(appUseCase)
+	client, err := kube.NewKubeClient(v)
+	if err != nil {
+		return nil, nil, err
+	}
+	appCISettingUseCase, err := biz.NewAppCISettingUseCase(appUseCase, client)
+	if err != nil {
+		return nil, nil, err
+	}
+	appCISettingService := service.NewAppCISettingService(appCISettingUseCase)
 	appCITaskUseCase, err := biz.NewAppCITaskUseCase(appUseCase, v)
 	if err != nil {
 		return nil, nil, err
 	}
 	appCITaskService := service.NewAppCITaskService(appCITaskUseCase)
-	v2 := service.NewServices(appService, appCITaskService)
-	grpcServer := server.NewGRPCServer(bootstrap, v2)
-	httpServer := server.NewHTTPServer(bootstrap, v2)
+	v2 := service.NewServices(appService, appCISettingService, appCITaskService)
+	grpcServer := server.NewGRPCServer(bootstrap)
+	httpServer := server.NewHTTPServer(bootstrap)
 	applicationReconciler := controller.NewApplicationReconciler(v)
 	v3 := kube.NewManagedReconciler(applicationReconciler)
 	kubeManagerServer, err := server.NewKubeManagerServer(bootstrap, v, v3)
 	if err != nil {
 		return nil, nil, err
 	}
-	app := newApp(logger, grpcServer, httpServer, kubeManagerServer)
+	app := newApp(logger, v2, grpcServer, httpServer, kubeManagerServer)
 	return app, func() {
 	}, nil
 }

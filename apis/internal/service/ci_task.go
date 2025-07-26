@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/emptypb"
 	task "kubecaptain/apis/api/v1/ci_task"
 	"kubecaptain/apis/internal/biz"
@@ -22,12 +22,9 @@ func NewAppCITaskService(
 	}
 }
 
-func (a *AppCITaskService) RegisterServiceGRPCServer(s grpc.ServiceRegistrar) {
-	task.RegisterAppCITaskServiceServer(s, a)
-}
-
-func (a *AppCITaskService) RegisterServiceHTTPServer(s *http.Server) {
-	task.RegisterAppCITaskServiceHTTPServer(s, a)
+func (a *AppCITaskService) Register(gs *grpc.Server, hs *http.Server) {
+	task.RegisterAppCITaskServiceServer(gs, a)
+	task.RegisterAppCITaskServiceHTTPServer(hs, a)
 }
 
 func (a *AppCITaskService) Create(ctx context.Context, request *task.CreateRequest) (*emptypb.Empty, error) {

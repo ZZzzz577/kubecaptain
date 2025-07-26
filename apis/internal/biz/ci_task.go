@@ -35,12 +35,16 @@ func NewAppCITaskUseCase(
 func (a *AppCITaskUseCase) Create(ctx context.Context, request *task.CreateRequest) error {
 	app, err := a.app.get(ctx, request.Name)
 	if err != nil {
-		log.Error().Err(err).Msg("create application CI task error")
+		log.Error().Err(err).Msg("get app error")
 		return err
 	}
-	configMap, err := a.app.getDockerfileConfigMap(ctx, app.Name)
+	appConfig := &corev1.ConfigMap{}
+	err = a.kubeClient.Get(ctx, client.ObjectKey{
+		Namespace: app.Namespace,
+		Name:      fmt.Sprintf("%s-dockerfile", app.Name),
+	}, appConfig)
 	if err != nil {
-		log.Error().Err(err).Msg("create application ci task error")
+		log.Error().Err(err).Msg("get app config error")
 		return err
 	}
 	ciTaskName := fmt.Sprintf("%s-%s", app.Name, time.Now().Format("20060102150405"))
@@ -84,7 +88,7 @@ func (a *AppCITaskUseCase) Create(ctx context.Context, request *task.CreateReque
 							VolumeSource: corev1.VolumeSource{
 								ConfigMap: &corev1.ConfigMapVolumeSource{
 									LocalObjectReference: corev1.LocalObjectReference{
-										Name: configMap.Name,
+										Name: appConfig.Name,
 									},
 								},
 							},
@@ -94,13 +98,14 @@ func (a *AppCITaskUseCase) Create(ctx context.Context, request *task.CreateReque
 			},
 		},
 	}
-	err = a.kubeClient.Create(ctx, ciTask)
+
+	err = controllerutil.SetControllerReference(app, ciTask, a.mgr.GetScheme())
 	if err != nil {
 		log.Error().Err(err).Msg("create application CI task error")
 		return err
 	}
 
-	err = controllerutil.SetControllerReference(app, ciTask, a.mgr.GetScheme())
+	err = a.kubeClient.Create(ctx, ciTask)
 	if err != nil {
 		log.Error().Err(err).Msg("create application CI task error")
 		return err

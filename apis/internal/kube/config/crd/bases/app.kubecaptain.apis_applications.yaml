@@ -56,7 +56,6 @@ spec:
                 minItems: 1
                 type: array
             required:
-            - ci
             - users
             type: object
           status:

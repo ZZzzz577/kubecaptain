@@ -20,7 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AppCITaskService_Create_FullMethodName = "/kubecaptain.apis.api.v1.app.AppCITaskService/Create"
+	AppCITaskService_Create_FullMethodName = "/kubecaptain.api.v1.app.AppCITaskService/Create"
 )
 
 // AppCITaskServiceClient is the client API for AppCITaskService service.
@@ -109,7 +109,7 @@ func _AppCITaskService_Create_Handler(srv interface{}, ctx context.Context, dec 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AppCITaskService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "kubecaptain.apis.api.v1.app.AppCITaskService",
+	ServiceName: "kubecaptain.api.v1.app.AppCITaskService",
 	HandlerType: (*AppCITaskServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

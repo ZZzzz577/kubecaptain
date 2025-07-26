@@ -35,7 +35,7 @@ type ApplicationSpec struct {
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:MinItems:=1
 	Users []string `json:"users"`
-	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Optional
 	CI *ApplicationCIConfig `json:"ci"`
 }
 

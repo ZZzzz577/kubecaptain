@@ -1,15 +1,23 @@
 package service
 
-import "github.com/google/wire"
+import (
+	"github.com/go-kratos/kratos/v2/transport/grpc"
+	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/google/wire"
+)
 
-type Service interface{}
+type Service interface {
+	Register(gs *grpc.Server, hs *http.Server)
+}
 
 func NewServices(
 	app *AppService,
+	appCISetting *AppCISettingService,
 	appCITask *AppCITaskService,
 ) []Service {
 	return []Service{
 		app,
+		appCISetting,
 		appCITask,
 	}
 }
@@ -18,5 +26,6 @@ func NewServices(
 var ProviderSet = wire.NewSet(
 	NewServices,
 	NewAppService,
+	NewAppCISettingService,
 	NewAppCITaskService,
 )

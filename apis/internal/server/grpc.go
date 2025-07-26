@@ -5,11 +5,10 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"kubecaptain/apis/internal/conf"
-	"kubecaptain/apis/internal/service"
 )
 
 // NewGRPCServer new a gRPC server.
-func NewGRPCServer(config *conf.Bootstrap, services []service.Service) *grpc.Server {
+func NewGRPCServer(config *conf.Bootstrap) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			recovery.Recovery(),
@@ -26,11 +25,5 @@ func NewGRPCServer(config *conf.Bootstrap, services []service.Service) *grpc.Ser
 	if c.Grpc.Timeout != nil {
 		opts = append(opts, grpc.Timeout(c.Grpc.Timeout.AsDuration()))
 	}
-	srv := grpc.NewServer(opts...)
-	for _, s := range services {
-		if v, ok := s.(GRPCService); ok {
-			v.RegisterServiceGRPCServer(srv)
-		}
-	}
-	return srv
+	return grpc.NewServer(opts...)
 }

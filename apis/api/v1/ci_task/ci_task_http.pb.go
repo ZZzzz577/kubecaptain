@@ -20,7 +20,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
-const OperationAppCITaskServiceCreate = "/kubecaptain.apis.api.v1.app.AppCITaskService/Create"
+const OperationAppCITaskServiceCreate = "/kubecaptain.api.v1.app.AppCITaskService/Create"
 
 type AppCITaskServiceHTTPServer interface {
 	Create(context.Context, *CreateRequest) (*emptypb.Empty, error)

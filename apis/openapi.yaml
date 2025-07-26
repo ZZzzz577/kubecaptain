@@ -17,7 +17,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.ListResponse'
+                                $ref: '#/components/schemas/kubecaptain.api.v1.app.ListResponse'
         post:
             tags:
                 - AppService
@@ -26,7 +26,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+                            $ref: '#/components/schemas/kubecaptain.api.v1.app.App'
                 required: true
             responses:
                 "200":
@@ -47,7 +47,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+                            $ref: '#/components/schemas/kubecaptain.api.v1.app.App'
                 required: true
             responses:
                 "200":
@@ -70,7 +70,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+                                $ref: '#/components/schemas/kubecaptain.api.v1.app.App'
         delete:
             tags:
                 - AppService
@@ -81,6 +81,44 @@ paths:
                   required: true
                   schema:
                     type: string
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /v1/app/{name}/ci:
+        get:
+            tags:
+                - AppCISettingService
+            operationId: AppCISettingService_Get
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/kubecaptain.api.v1.app.AppCISetting'
+        post:
+            tags:
+                - AppCISettingService
+            operationId: AppCISettingService_Apply
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/kubecaptain.api.v1.app.AppCISetting'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -100,7 +138,7 @@ paths:
                 content:
                     application/json:
                         schema:
-                            $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.CreateRequest'
+                            $ref: '#/components/schemas/kubecaptain.api.v1.app.CreateRequest'
                 required: true
             responses:
                 "200":
@@ -108,11 +146,10 @@ paths:
                     content: {}
 components:
     schemas:
-        kubecaptain.apis.api.v1.app.App:
+        kubecaptain.api.v1.app.App:
             required:
                 - name
                 - users
-                - ciConfig
             type: object
             properties:
                 name:
@@ -123,13 +160,11 @@ components:
                     type: array
                     items:
                         type: string
-                ciConfig:
-                    $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.AppCIConfig'
                 createdAt:
                     readOnly: true
                     type: string
                     format: date-time
-        kubecaptain.apis.api.v1.app.AppCIConfig:
+        kubecaptain.api.v1.app.AppCISetting:
             required:
                 - gitUrl
                 - dockerfile
@@ -139,20 +174,21 @@ components:
                     type: string
                 dockerfile:
                     type: string
-        kubecaptain.apis.api.v1.app.CreateRequest:
+        kubecaptain.api.v1.app.CreateRequest:
             required:
                 - name
             type: object
             properties:
                 name:
                     type: string
-        kubecaptain.apis.api.v1.app.ListResponse:
+        kubecaptain.api.v1.app.ListResponse:
             type: object
             properties:
                 items:
                     type: array
                     items:
-                        $ref: '#/components/schemas/kubecaptain.apis.api.v1.app.App'
+                        $ref: '#/components/schemas/kubecaptain.api.v1.app.App'
 tags:
+    - name: AppCISettingService
     - name: AppCITaskService
     - name: AppService

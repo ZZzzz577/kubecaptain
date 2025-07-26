@@ -4,6 +4,7 @@ import (
 	"flag"
 	"kubecaptain/apis/internal/conf"
 	"kubecaptain/apis/internal/server"
+	"kubecaptain/apis/internal/service"
 	"os"
 
 	kzlog "github.com/go-kratos/kratos/contrib/log/zerolog/v2"
@@ -34,7 +35,15 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "configs/config.yaml", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server, ks *server.KubeManagerServer) *kratos.App {
+func newApp(logger log.Logger,
+	services []service.Service,
+	gs *grpc.Server,
+	hs *http.Server,
+	ks *server.KubeManagerServer,
+) *kratos.App {
+	for _, svc := range services {
+		svc.Register(gs, hs)
+	}
 	return kratos.New(
 		kratos.ID(id),
 		kratos.Name(Name),

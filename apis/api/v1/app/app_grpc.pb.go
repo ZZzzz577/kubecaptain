@@ -20,11 +20,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AppService_List_FullMethodName   = "/kubecaptain.apis.api.v1.app.AppService/List"
-	AppService_Get_FullMethodName    = "/kubecaptain.apis.api.v1.app.AppService/Get"
-	AppService_Create_FullMethodName = "/kubecaptain.apis.api.v1.app.AppService/Create"
-	AppService_Update_FullMethodName = "/kubecaptain.apis.api.v1.app.AppService/Update"
-	AppService_Delete_FullMethodName = "/kubecaptain.apis.api.v1.app.AppService/Delete"
+	AppService_List_FullMethodName   = "/kubecaptain.api.v1.app.AppService/List"
+	AppService_Get_FullMethodName    = "/kubecaptain.api.v1.app.AppService/Get"
+	AppService_Create_FullMethodName = "/kubecaptain.api.v1.app.AppService/Create"
+	AppService_Update_FullMethodName = "/kubecaptain.api.v1.app.AppService/Update"
+	AppService_Delete_FullMethodName = "/kubecaptain.api.v1.app.AppService/Delete"
 )
 
 // AppServiceClient is the client API for AppService service.
@@ -245,7 +245,7 @@ func _AppService_Delete_Handler(srv interface{}, ctx context.Context, dec func(i
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AppService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "kubecaptain.apis.api.v1.app.AppService",
+	ServiceName: "kubecaptain.api.v1.app.AppService",
 	HandlerType: (*AppServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
