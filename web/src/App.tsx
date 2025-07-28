@@ -1,13 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
-import routes from "@/router";
-import ThemeProvider from "@/component/theme/provider.tsx";
-import LocalesProvider from "@/component/locales/provider.tsx";
+
+import ThemeProvider from "@/components/theme/provider.tsx";
+import LocalesProvider from "@/components/locales/provider.tsx";
+import router from "@/routes";
 
 function App() {
     return (
         <ThemeProvider>
             <LocalesProvider>
-                <RouterProvider router={createBrowserRouter(routes)} />
+                <RouterProvider router={createBrowserRouter(router)} />
             </LocalesProvider>
         </ThemeProvider>
     );

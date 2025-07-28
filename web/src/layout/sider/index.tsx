@@ -1,7 +1,7 @@
 import { theme } from "antd";
 import type { CSSProperties } from "react";
 import Sider from "antd/es/layout/Sider";
-import Menu from "@/layout/sider/component/Menu.tsx";
+import Menu from "@/layout/sider/components/Menu.tsx";
 
 export default function AppSider(props: { collapsed: boolean }) {
     const { collapsed } = props;

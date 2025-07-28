@@ -1,10 +1,10 @@
 import { Flex, theme } from "antd";
 import { Header } from "antd/es/layout/layout";
-import MenuFoldToggler from "@/layout/header/component/MenuFoldToggler.tsx";
-import Breadcrumb from "@/layout/header/component/Breadcrumb.tsx";
-import FullScreenToggler from "@/layout/header/component/FullScreenToggler.tsx";
-import ThemeToggler from "@/layout/header/component/ThemeToggler.tsx";
-import LocalesToggler from "@/layout/header/component/LocalesToggler.tsx";
+import MenuFoldToggler from "@/layout/header/components/MenuFoldToggler.tsx";
+import Breadcrumb from "@/layout/header/components/Breadcrumb.tsx";
+import FullScreenToggler from "@/layout/header/components/FullScreenToggler.tsx";
+import ThemeToggler from "@/layout/header/components/ThemeToggler.tsx";
+import LocalesToggler from "@/layout/header/components/LocalesToggler.tsx";
 
 interface HeaderProps {
     collapsed: boolean;

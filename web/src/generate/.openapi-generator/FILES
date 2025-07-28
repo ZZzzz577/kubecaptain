@@ -1,0 +1,12 @@
+.openapi-generator-ignore
+apis/AppCISettingServiceApi.ts
+apis/AppCITaskServiceApi.ts
+apis/AppServiceApi.ts
+apis/index.ts
+index.ts
+models/KubecaptainApiV1AppApp.ts
+models/KubecaptainApiV1AppAppCISetting.ts
+models/KubecaptainApiV1AppCreateRequest.ts
+models/KubecaptainApiV1AppListResponse.ts
+models/index.ts
+runtime.ts
