@@ -4,6 +4,7 @@ import { configureDefaultWorkerFactory } from "monaco-editor-wrapper/workers/wor
 import { createUrl } from "monaco-languageclient/tools";
 import { type IWebSocket, WebSocketMessageReader, WebSocketMessageWriter } from "vscode-ws-jsonrpc";
 import { useMemo } from "react";
+import  'vscode'
 
 const text = `{
     "$schema": "http://json.schemastore.org/coffeelint",
